@@ -40,15 +40,20 @@ app.post('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) throw err;
         // push req.body (what the user enters) into the data
-        const {title, text} = req.body
+        const {title, text} = req.body // deconstructing the req.body into its elements
+        // if there is information entered
         if (title && text) {
+            // create an id for the note so when the note is created it has a unique id identifier
             const newObject = {
                 text,
                 title,
                 id: uuidv4(),
             }
+            // parse the data
             const array = JSON.parse(data);
+            // push the new note to the array
             array.push(newObject);
+            // write the new array to the json file
             fs.writeFile('./db/db.json', JSON.stringify(array), (err) => {
                 if (err) throw err;
                 // send back the data response to the client
@@ -59,16 +64,20 @@ app.post('/api/notes', (req, res) => {
     });
 });
 
+// localhost:3001/api/notes/id - specifies the id when the delete icon is clicked
 app.delete('/api/notes/:id', (req, res) => {
     // gather the data
     console.log(req.params.id);
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         // parse the data
         const array = JSON.parse(data);
-        // use the .filter method to return a new array by looping through and filtering out anything that matches the conditional, so if the id doesnt match, we want it to go into the new array
+        // loop through the array
         for (let i = 0; i < array.length; i++) {
+            // create a note varible 
             const note = array[i];
+            // if the current note id is equal to that of the selected notw to delete
             if (note.id === req.params.id) {
+                // delete the 1 note that has been selected
                 array.splice(i, 1);
             }
         }
